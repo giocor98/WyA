@@ -1,3 +1,5 @@
+from scope import Sccope
+
 class Variable:
 
     __name = ""
@@ -44,3 +46,19 @@ class AlwaysAskVariable(Variable):
 
     def getValue(self):
         return input(super().getValue())
+
+
+class DelayedCmd(Variable):
+
+    def __init__ (self, name, stringa):
+        Variable.__init__(self, name, stringa)
+
+    def getValue(self):
+        try:
+            Scope.getInstance().getCmd().get(Variable.getValue(self)).exeCmd()
+            print (Variable.getValue(self))
+            return ""
+        except Exception as e:
+            print (e)
+            print("Deferred load had an excception")
+            return ""

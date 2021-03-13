@@ -18,7 +18,6 @@ class Dir:
 
 
     def __setVar(self, var, name):
-        print("Creating Var " + var.getName() + " in: " + self.getName())
         if self.__canBeAdded(name):
             self.__variables[name] = var
 
@@ -29,7 +28,6 @@ class Dir:
         return self.__variables[name]
 
     def __setDir(self, dir, name):
-        print("Creating Dir " + dir.getName() + " in: " + self.getName())
         if self.__canBeAdded(name):
             self.__subDirs[name] = dir
 
@@ -107,12 +105,12 @@ class Dir:
         try:
             if self.__isInDir(name):
                 return self.getDir(name)
-            elif self.__isInDir(name):
+            elif self.__isInVar(name):
                 return self.getVar(name)
             else:
-                raise Exception("not found: " + name)
-        except:
-            raise Exception("Unexpected error")
+                raise Exception("not found: " + name + " in: " + self.getName())
+        except Exception as e:
+            raise Exception("Unexpected error:\n" + str(e))
 
 
     def add(self, x):
@@ -161,6 +159,10 @@ class Scope:
         else:
             Scope.__instance = self
         self.push(Dir(""))
+        self.cmd = self.mkdir("cmd")
+
+    def getCmd(self):
+        return self.cmd
 
     def __isDir(dir):
         return isinstance(dir, Dir)
@@ -189,10 +191,14 @@ class Scope:
     def mkdir(self, name):
         d = Dir(name)
         self.getLast().add(d)
+        return d
 
 
     def add(self, x):
         return self.getLast().add(x)
+
+    def addCmd(self, x):
+        return self.getCmd().add(x)
 
 
     def rm(self, x):
